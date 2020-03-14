@@ -35,13 +35,13 @@
 #define reportResult(result,operation) (_reportResult((result),(operation),strrchr(__FILE__, '/')+1,__LINE__))
 static inline bool _reportResult(kern_return_t result, const char *operation, const char* file, int line) {
     if ( result != ERR_SUCCESS ) {
-        printf("%s:%d: %s: %s\n", file, line, operation, mach_error_string(result)); 
+        printf("%s:%d: %s: %s\n", file, line, operation, mach_error_string(result));
         return false;
     }
     return true;
 }
 
-bool _TPCircularBufferInit(TPCircularBuffer *buffer, int32_t length, size_t structSize) {
+bool _TPCircularBufferInit(TPCircularBuffer *buffer, uint32_t length, size_t structSize) {
     
     assert(length > 0);
     
@@ -54,7 +54,7 @@ bool _TPCircularBufferInit(TPCircularBuffer *buffer, int32_t length, size_t stru
     int retries = 3;
     while ( true ) {
 
-        buffer->length = (int32_t)round_page(length);    // We need whole page sizes
+        buffer->length = (uint32_t)round_page(length);    // We need whole page sizes
 
         // Temporarily allocate twice the length, so we have the contiguous address space to
         // support a second instance of the buffer directly after
@@ -138,7 +138,7 @@ void TPCircularBufferCleanup(TPCircularBuffer *buffer) {
 }
 
 void TPCircularBufferClear(TPCircularBuffer *buffer) {
-    int32_t fillCount;
+    uint32_t fillCount;
     if ( TPCircularBufferTail(buffer, &fillCount) ) {
         TPCircularBufferConsume(buffer, fillCount);
     }
